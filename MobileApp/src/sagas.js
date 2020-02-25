@@ -1,7 +1,9 @@
 import {fork, all} from 'redux-saga/effects';
 
-function* rootSaga(): Saga<void> {
-  yield all([]);
+import HomeSaga from './screens/Home/saga';
+
+function* rootSaga() {
+  yield all([fork(HomeSaga)]);
 }
 
 export default rootSaga;

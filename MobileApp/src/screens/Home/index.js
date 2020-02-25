@@ -18,10 +18,11 @@ class Home extends PureComponent<Props> {
   };
 
   onClickButton = e => {
-    const {actions} = this.props;
-    const {navigation} = this.props;
-    navigation.navigate('video');
-    actions.sample();
+    const {searchText} = this.state;
+    const {actions, navigation} = this.props;
+    console.log("before")
+    // navigation.navigate('video', {url: ''});
+    actions.fetchYoutubeVideoId(searchText, navigation);
   };
 
   render() {
@@ -74,6 +75,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(
     {
       sample: HomeActions.pressMeSample,
+      fetchYoutubeVideoId: HomeActions.fetchYoutubeVideoId,
     },
     dispatch,
   ),
