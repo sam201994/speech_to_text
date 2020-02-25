@@ -8,37 +8,27 @@
 
 import React from 'react';
 import {Provider} from 'react-redux';
-import {
-  SafeAreaView,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
 
 import Home from './screens/Home';
-
 import configureStore from './configureStore';
+import RandomVideo from './screens/Home/RandomVideo';
+
 const {store} = configureStore();
+const Stack = createStackNavigator();
 
-const MobileApp: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar/>
-
-      <SafeAreaView>
-        <Provider store={store}>
-          <ScrollView>
-            <View>
-              <Text>hellosddd</Text>
-              <Home />
-            </View>
-          </ScrollView>
-        </Provider>
-      </SafeAreaView>
-    </>
-  );
-};
-
-
-export default MobileApp;
+export default class MobileApp extends React.Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <NavigationContainer initialRouteName="home">
+          <Stack.Navigator>
+            <Stack.Screen name="home" component={Home} />
+            <Stack.Screen name="video" component={RandomVideo} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    );
+  }
+}
