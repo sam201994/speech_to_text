@@ -1,15 +1,65 @@
 /* @flow */
 
 import React, {PureComponent} from 'react';
-import {View, Button, TextInput, StyleSheet} from 'react-native';
+import {
+  View,
+  Button,
+  TextInput,
+  StyleSheet,
+  TouchableHighlight,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import HomeActions from './actions';
-
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faMicrophone} from '@fortawesome/free-solid-svg-icons';
+// import Voice from 'react-native-voice';
+// console.log(Voice)
 class Home extends PureComponent<Props> {
-  state = {
-    searchText: '',
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      recognized: '',
+      started: '',
+      results: [],
+      searchText: '',
+    };
+  }
+
+  // componentWillUnmount() {
+  //   Voice.destroy().then(Voice.removeAllListeners);
+  // }
+
+  // onSpeechStart = e => {
+  //   this.setState({
+  //     started: '√',
+  //   });
+  // };
+
+  // onSpeechRecognized = e => {
+  //   this.setState({
+  //     recognized: '√',
+  //   });
+  // };
+
+  // onSpeechResults = e => {
+  //   this.setState({
+  //     results: e.value,
+  //   });
+  // };
+
+  // async _startRecognition(e) {
+  //   this.setState({
+  //     recognized: '',
+  //     started: '',
+  //     results: [],
+  //   });
+  //   try {
+  //     await Voice.start('en-US');
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // }
 
   onChangeText = text => {
     this.setState({
@@ -20,15 +70,26 @@ class Home extends PureComponent<Props> {
   onClickButton = e => {
     const {searchText} = this.state;
     const {actions, navigation} = this.props;
-    console.log("before")
-    // navigation.navigate('video', {url: ''});
+    console.log('before');
     actions.fetchYoutubeVideoId(searchText, navigation);
+  };
+
+  startAudio = () => {
+    console.log('here');
   };
 
   render() {
     const {searchText} = this.props;
+    // console.log("speech: ", results);
     return (
       <View style={styles.container}>
+        <View style={styles.iconContainer}>
+          <TouchableHighlight
+            style={styles.mic}
+            onPress={this.startAudio}>
+            <FontAwesomeIcon icon={faMicrophone} size={25} />
+          </TouchableHighlight>
+        </View>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputBox}
@@ -51,6 +112,19 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 40,
     flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  mic: {
+    backgroundColor: '#d9d9d9',
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    flexDirection: 'column',
+    alignItems: 'center',
     justifyContent: 'center',
   },
   inputBox: {
