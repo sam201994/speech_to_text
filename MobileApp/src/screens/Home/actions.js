@@ -1,16 +1,8 @@
 export const ActionTypes = Object.freeze({
-  SAMPLE: 'app/screens/home/SAMPLE',
   FETCH_YOUTTUBE_VIDEO_ID: 'app/screens/home/FETCH_YOUTTUBE_VIDEO_ID',
   FETCH_YOUTTUBE_SUCCESS: 'app/screens/home/FETCH_YOUTTUBE_SUCCESS',
   FETCH_YOUTTUBE_FAIL: 'app/screens/home/FETCH_YOUTTUBE_FAIL',
 });
-
-export function pressMeSample() {
-  return {
-    type: ActionTypes.SAMPLE,
-    payload: {},
-  };
-}
 
 export function fetchYoutubeVideoId(searchText, navigation) {
   return {
@@ -36,7 +28,6 @@ export function fetchYoutubeFail() {
 
 export default {
   ActionTypes,
-  pressMeSample,
   fetchYoutubeVideoId,
   fetchYoutubeSuccess,
   fetchYoutubeFail,

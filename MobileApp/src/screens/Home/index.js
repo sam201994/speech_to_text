@@ -7,13 +7,18 @@ import {
   TextInput,
   StyleSheet,
   TouchableHighlight,
+  Text,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import HomeActions from './actions';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faMicrophone} from '@fortawesome/free-solid-svg-icons';
-// import Voice from 'react-native-voice';
+import {
+  faMicrophone,
+  faSearch,
+  faTimes,
+} from '@fortawesome/free-solid-svg-icons';
+import Voice from '@react-native-community/voice';
 // console.log(Voice)
 class Home extends PureComponent<Props> {
   constructor(props) {
@@ -22,103 +27,136 @@ class Home extends PureComponent<Props> {
       recognized: '',
       started: '',
       results: [],
-      searchText: '',
+      active: false,
     };
+    Voice.onSpeechStart = this.onSpeechStart;
+    Voice.onSpeechRecognized = this.onSpeechRecognized;
+    Voice.onSpeechResults = this.onSpeechResults;
   }
 
-  // componentWillUnmount() {
-  //   Voice.destroy().then(Voice.removeAllListeners);
-  // }
+  componentWillUnmount() {
+    Voice.destroy().then(Voice.removeAllListeners);
+  }
 
-  // onSpeechStart = e => {
-  //   this.setState({
-  //     started: '√',
-  //   });
-  // };
-
-  // onSpeechRecognized = e => {
-  //   this.setState({
-  //     recognized: '√',
-  //   });
-  // };
-
-  // onSpeechResults = e => {
-  //   this.setState({
-  //     results: e.value,
-  //   });
-  // };
-
-  // async _startRecognition(e) {
-  //   this.setState({
-  //     recognized: '',
-  //     started: '',
-  //     results: [],
-  //   });
-  //   try {
-  //     await Voice.start('en-US');
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // }
-
-  onChangeText = text => {
-    this.setState({
-      searchText: text,
+  onClearInput = () => {
+    Voice.stop().then(() => {
+      Voice.destroy();
+      this.setState({
+        recognized: '',
+        started: '',
+        results: [],
+        active: false,
+      });
     });
   };
 
+  onSpeechStart = e => {
+    this.setState({
+      started: '√',
+    });
+  };
+
+  onSpeechRecognized = e => {
+    this.setState({
+      recognized: '√',
+    });
+  };
+
+  onSpeechResults = e => {
+    this.setState({
+      results: e.value,
+    });
+  };
+
+  async _startRecognition(e) {
+    const {active} = this.state;
+    if (!active) {
+      this.setState({
+        recognized: '',
+        started: '',
+        results: [],
+        active: true,
+      });
+      try {
+        await Voice.start('en-US');
+      } catch (e) {
+        console.error('error: ', e);
+      }
+    }
+  }
+
   onClickButton = e => {
-    const {searchText} = this.state;
+    const {results} = this.state;
     const {actions, navigation} = this.props;
-    console.log('before');
+    const searchText = results.join(' ');
+    Voice.stop();
+    this.setState({
+      recognized: '',
+      started: '',
+      active: false,
+    });
+
     actions.fetchYoutubeVideoId(searchText, navigation);
   };
 
-  startAudio = () => {
-    console.log('here');
-  };
-
   render() {
-    const {searchText} = this.props;
-    // console.log("speech: ", results);
+    const {results, active} = this.state;
+    const iconContainer = active
+      ? {...styles.iconContainer, backgroundColor: 'green'}
+      : styles.iconContainer;
+
     return (
       <View style={styles.container}>
-        <View style={styles.iconContainer}>
+        <View style={styles.row}>
           <TouchableHighlight
-            style={styles.mic}
-            onPress={this.startAudio}>
+            style={iconContainer}
+            onPress={this._startRecognition.bind(this)}>
             <FontAwesomeIcon icon={faMicrophone} size={25} />
           </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.iconContainer}
+            onPress={this.onClickButton}>
+            <FontAwesomeIcon icon={faSearch} size={25} />
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.iconContainer}
+            onPress={this.onClearInput}>
+            <FontAwesomeIcon icon={faTimes} size={25} />
+          </TouchableHighlight>
         </View>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.inputBox}
-            onChangeText={text => this.onChangeText(text)}
-            value={searchText}
-          />
+        <View style={styles.row}>
+          <View style={styles.inputContainer}>
+            <Text>{results.join(' ')}</Text>
+          </View>
         </View>
-        <Button title="Search" color="#f194ff" onPress={this.onClickButton} />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    margin: 20,
+  },
   container: {
     height: '100%',
     width: '100%',
     marginTop: 200,
   },
+  buttonContainer: {
+    backgroundColor: '#e8e6e6',
+    width: 100,
+    margin: 5,
+    borderRadius: 5,
+  },
   inputContainer: {
-    marginTop: 40,
     flexDirection: 'row',
     justifyContent: 'center',
+    height: 50,
   },
   iconContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  mic: {
     backgroundColor: '#d9d9d9',
     height: 40,
     width: 40,
@@ -126,29 +164,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  inputBox: {
-    height: 40,
-    width: 250,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    fontSize: 18,
-    padding: 5,
-  },
-  backgroundVideo: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
+    margin: 10,
   },
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(
     {
-      sample: HomeActions.pressMeSample,
       fetchYoutubeVideoId: HomeActions.fetchYoutubeVideoId,
     },
     dispatch,
