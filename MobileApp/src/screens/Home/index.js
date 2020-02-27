@@ -1,14 +1,7 @@
 /* @flow */
 
 import React, {PureComponent} from 'react';
-import {
-  View,
-  Button,
-  TextInput,
-  StyleSheet,
-  TouchableHighlight,
-  Text,
-} from 'react-native';
+import {View, StyleSheet, TouchableHighlight, Text} from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import HomeActions from './actions';
@@ -19,7 +12,7 @@ import {
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 import Voice from '@react-native-community/voice';
-// console.log(Voice)
+
 class Home extends PureComponent<Props> {
   constructor(props) {
     super(props);
@@ -80,7 +73,7 @@ class Home extends PureComponent<Props> {
       try {
         await Voice.start('en-US');
       } catch (e) {
-        console.error('error: ', e);
+        throw e;
       }
     }
   }

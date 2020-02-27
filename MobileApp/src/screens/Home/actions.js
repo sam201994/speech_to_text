@@ -1,3 +1,9 @@
+/*
+ *
+ * Home Actions
+ *
+ */
+
 export const ActionTypes = Object.freeze({
   FETCH_YOUTTUBE_VIDEO_ID: 'app/screens/home/FETCH_YOUTTUBE_VIDEO_ID',
   FETCH_YOUTTUBE_SUCCESS: 'app/screens/home/FETCH_YOUTTUBE_SUCCESS',
