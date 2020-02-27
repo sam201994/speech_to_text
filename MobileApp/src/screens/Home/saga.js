@@ -8,6 +8,7 @@ import {put, takeLatest, all, call} from 'redux-saga/effects';
 import request from '../../Utils/requests';
 import Actions, {ActionTypes} from './actions';
 
+// CAUTION: DELETE API KEY FROM THIS FILE AFTER TESTING
 const apiKey = 'AIzaSyDDM_hSvDBgVMUdAwdNAUNbJLPNV68YhwA';
 
 const random = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
